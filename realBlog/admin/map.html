@@ -95,11 +95,11 @@ div.change div{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/m
 				//var postURL = "http://211.151.71.124:8080/";
 				var postURL = "http://localhost:8080/";
 				info.push('<form name="mistake" action="'+postURL +'" method="get"  target="_blank">');
-				info.push('<label>错误的地址是<input type="text" name="mistakeRoad"  value="' + road + '" /></label><br/>');
+				info.push('<label>公司的地址是<input type="text" name="mistakeRoad"  value="' + road + '" /></label><br/>');
 				info.push('<label>此地的经度是<input type="text" name="mistakeInfoLat" readonly="readonly" value="' + poiX + '" /></label><br/>');
 				info.push('<label>此地的纬度是<input type="text" name="mistakeInfoLng" readonly="readonly" value="' + poiY + '" /></label><br/>');
-				info.push('<label>正确的地址是<input type="text" name="rightInfo" /></label>');
-				info.push('<input type="submit" value="提交纠错信息" />');
+				//info.push('<label>家庭的地址是<input type="text" name="rightInfo" /></label>');
+				info.push('<input type="submit" value="提交地址信息" />');
 				info.push('</form>');
 				var inforWindow = new AMap.InfoWindow({
 						offset : new AMap.Pixel(45, -34),
