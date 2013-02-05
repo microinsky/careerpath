@@ -1,0 +1,12 @@
+#Wed Jan 30 23:01:37 CST 2013
+eclipse.preferences.version=1
+encoding//realBlog/admin/article.py=utf-8
+encoding//realBlog/admin/category.py=utf-8
+encoding//realBlog/admin/link.py=utf8
+encoding//realBlog/admin/other.py=utf8
+encoding//realBlog/config/server.py=utf-8
+encoding//realBlog/func.py=utf-8
+encoding//realBlog/middleware.py=utf-8
+encoding//realBlog/rss.py=utf-8
+encoding//realBlog/urls.py=utf-8
+encoding//realBlog/views.py=utf-8

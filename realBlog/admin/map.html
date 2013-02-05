@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Hello, world</title>
+<style type="text/css">
+	html { height:100% }
+	body { height:100%; margin:0px; padding:0px }
+	#container { height:400px;width:700px;position:absolute;top:50px;left:50px;}
+	
+	/* 定义自定义点样式 */
+div.marker{height:40px;background:url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker.png)
+left top no-repeat;}
+div.marker div{height:28px;line-height:28px;margin:0 10px;color:#FFF;background:
+url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker_bg_170x28.gif) right top no-repeat;
+padding-right:10px;}
+
+/* 修改背景URL */
+div.change{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker-h.png);}
+div.change div{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker-h-l.gif);}
+</style>
+<script type="text/javascript"
+	src="http://webapi.amap.com/maps?v=1.1&key=5330cc846599b65275624084543beb2f">
+</script>   
+<script type="text/javascript">
+	function initialize() {
+		var mapObj = new AMap.Map("container",{
+			//center: 	new AMap.LngLat(116.404, 39.915),
+			center: 	new AMap.LngLat(116.39328003, 39.94659501),
+			level:	11
+		}); // 创建地图实例
+		
+		mapObj.plugin(["AMap.ToolBar", "AMap.OverView,AMap.Scale"], function () {
+			// 加载工具条
+			tool = new AMap.ToolBar({
+					direction : false, // 隐藏方向导航
+					ruler : false, // 隐藏视野级别控制尺
+					autoPosition : false // 禁止自动定位
+				});
+			mapObj.addControl(tool);
+			
+			// 加载鹰眼
+			view = new AMap.OverView();
+			mapObj.addControl(view);
+			
+			// 加载比例尺
+			scale = new AMap.Scale();
+			mapObj.addControl(scale);
+		});
+		
+		var marker = new AMap.Marker({
+				id : "m23", //唯一ID
+				position : new AMap.LngLat(116.37388157654, 39.907409934248),
+				icon : "http://webapi.amap.com/static/images/marker_sprite.png", //marker图标，直接传递地址url
+				offset : {
+					x : -8,
+					y : -34
+				} //相对于基点的位置
+			});
+		mapObj.addOverlays(marker); //将点添加到地图
+		
+		
+		var lnglat;
+		mapObj.bind(mapObj, "click", function (e) {
+			console.log(e);
+			lnglat = e.lnglat;
+			var marker = new AMap.Marker({
+					id : "m123",
+					position : e.lnglat,
+					icon : "http://webapi.amap.com/static/images/marker_sprite.png",
+					offset : {
+						x : -8,
+						y : -34
+					}
+				});
+			mapObj.addOverlays(marker);
+			mapObj.setCenter(lnglat);
+			var road = "";
+			var geocoderOption = {
+				range : 100, // 范围
+				crossnum : 1, // 道路交叉口数
+				roadnum : 1, // 路线记录数
+				poinum : 1 // POI点数
+			};
+			var poiX = e.lnglat.lat,
+			poiY = e.lnglat.lng;
+			var geocoder = new AMap.Geocoder(geocoderOption);
+			geocoder.regeocode(new AMap.LngLat(poiY, poiX),
+				function (data) {
+				//获取逆地理编码的结果
+				road = (data.status == "E0"&&data.list[0].roadlist !="")?data.list[0].roadlist[0].name:"无信息";
+					
+				var info = [];
+				//var postURL = "http://211.151.71.124:8080/";
+				var postURL = "http://localhost:8080/";
+				info.push('<form name="mistake" action="'+postURL +'" method="get"  target="_blank">');
+				info.push('<label>错误的地址是<input type="text" name="mistakeRoad"  value="' + road + '" /></label><br/>');
+				info.push('<label>此地的经度是<input type="text" name="mistakeInfoLat" readonly="readonly" value="' + poiX + '" /></label><br/>');
+				info.push('<label>此地的纬度是<input type="text" name="mistakeInfoLng" readonly="readonly" value="' + poiY + '" /></label><br/>');
+				info.push('<label>正确的地址是<input type="text" name="rightInfo" /></label>');
+				info.push('<input type="submit" value="提交纠错信息" />');
+				info.push('</form>');
+				var inforWindow = new AMap.InfoWindow({
+						offset : new AMap.Pixel(45, -34),
+						content : info.join('')
+					});				
+				inforWindow.open(mapObj, marker.getPosition());
+			});			
+		});
+	}
+</script>
+</head>  
+
+<body onload="initialize()">  
+	<div id="container"></div>
+</body>
+</html>

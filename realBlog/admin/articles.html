@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="content">
+<div id="main" class="page-dianlog">
+    <div class="feed-list" id="feed-list" >
+        {% for i in articles %}
+        <div class="feed feed-text user-repeat" id="article-{{ i.Id }}" data-comment="1">
+            <div class="feed-content-holder pop post">
+                <div class="pop-content clearfix">
+                    <div class="feed-hd no-content">
+                        <div class="feed-basic"></div>
+                    </div>
+                    <div class="feed-bd no-hd-content">
+                        <h4 class="feed-title">
+                            <a href="http://{{ host }}/article/{{ i.Id }}/" target="_blank" style="color:#444">{{ i.Title }}</a>
+                            <a href="" class="feed-user">{{ i.Author.Nickname }}</a>
+                        </h4>
+                        <span>{{ i.PostOn|date:"N j, Y H:i" }}  {{ i.Timezone|default_if_none:"" }} {{ i.TimezoneOffset|default_if_none:"" }} {{ i.IsDst|yesno:"夏令时,," }}</span>
+                        <div class="feed-act">
+                            <a href="http://{{ host }}/admin/delete-article/{{ i.Id }}/" class="feed-del">删除</a>
+                            <a href="http://{{ host }}/admin/edit-article/{{ i.Id }}/" class="feed-edit">编辑</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="feed-ft J_FeedFooter" style="display:none">
+                    <div class="feed-ft-bottom"></div>
+                    <div class="feed-ft-triangle J_FeedFooterTriangle"></div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% include 'region-sidebar.html' %}
+</div>
+
+{% endblock %}
