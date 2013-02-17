@@ -180,6 +180,9 @@ def connectBlogDatabase(request):
 
     return c['realBlog_blogs_' + name]
 
+
+
+
 def connectAccountDatabase():
     """
     连接到账户数据库
@@ -193,3 +196,19 @@ def connectAccountDatabase():
 
     c = Connection(host)
     return c['realBlog_users']
+
+
+
+def connectMapsDatabase():
+    """
+    连接到地图数据库
+    """
+    # 缺省连接到本地数据库
+    if DATABASE_USERNAME is None:
+        host = 'mongodb://%s:%d' % (DATABASE_HOST, DATABASE_PORT)
+    else:
+        host = 'mongodb://%s:%s@%s:%d' %\
+               (DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT)
+
+    c = Connection(host)
+    return c['realBlog_maps']

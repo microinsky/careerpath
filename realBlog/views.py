@@ -359,8 +359,69 @@ def maps(request):
     setTemplateDir('admin')
     return render_to_response('map.html')
 
+def showMarkers(request, type):
+    #get makers from db
+    
+    db = connectMapsDatabase()
+    if type == 'company':
+        cmyLocation = list(db.companyaddress.find())
+    elif type == 'home':
+        cmyLocation = list(db.homeaddress.find())   
+         
+    jsonTxt = '['
+#    116.41319275 39.96870074
+    for it in cmyLocation:
+        jsonTxt +='{lng:'+it['Lng']+',lat:'+it['Lat']+'},'
+    
+    jsonTxt+=']'
+    
+    
+    res=HttpResponse()
+    res['Access-Control-Allow-Origin']='*'
+    res['Access-Control-Allow-Headers']='my-header,X-Requested-With'
+#    res.write('[{lng:116,lat:39},{lng:116.1,lat:39.2},{lng:116.3,lat:39.3}]')
+    res.write(jsonTxt)
+    return res
+#    return HttpResponse('[{lng:116,lat:39},{lng:116.1,lat:39.2},{lng:116.3,lat:39.3}]')
+
+@csrf_exempt
+def insertLocation(request, type):
+
+    if request.method == 'GET':
+        return render_admin_and_back(request, 'login.html', {
+            'page': '登录'
+        })
+
+    # 处理提交的表单
+    elif request.method == 'POST':
+
+        d = request.POST
+        cpyAddr = d['companyAddress']
+        cpyLat = d['companyLat']
+        cpyLng = d['companyLng']
+#        date = d['date']
 
 
+    db = connectMapsDatabase()
+    
+    if type == 'company':
+        db.companyaddress.insert({
+                'Address': cpyAddr,
+                'Lat': cpyLat,
+                'Lng': cpyLng
+            })
+    elif type == 'home':
+        db.homeaddress.insert({
+                'Address': cpyAddr,
+                'Lat': cpyLat,
+                'Lng': cpyLng
+            })
+
+    ensure_index_of_blog(db)
+
+    db.connection.disconnect()
+
+    return redirect(request, '111','maps/')
 
 def queryMineType(ext):
     d = {
