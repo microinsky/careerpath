@@ -1,0 +1,235 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>关键字搜索</title>
+    <!--<style>
+body{ margin:0; padding:0;font:12px/16px Verdana, Helvetica, Arial, sans-serif;}
+</style>-->
+
+    <link rel="stylesheet" href="/admin/style/map_mark.css" type="text/css"/>
+    <script language="javascript" src="http://webapi.amap.com/maps?v=1.1&key=5330cc846599b65275624084543beb2f"></script>
+    <script language="javascript">
+
+        var mapObj, toolbar, overview, scale;
+        var date, startTime;
+        function mapInit() {
+            var opt = {
+                level:13, //设置地图缩放级别
+                center:new AMap.LngLat(116.397428, 39.90923), //设置地图中心点
+                doubleClickZoom:true, //双击放大地图
+                scrollWheel:true//鼠标滚轮缩放地图
+            }
+            mapObj = new AMap.Map("iCenter", opt);AMap.Conf.network = 1;
+            mapObj.plugin(["AMap.ToolBar", "AMap.OverView", "AMap.Scale"], function () {
+                toolbar = new AMap.ToolBar();
+                toolbar.autoPosition = false; //加载工具条
+                mapObj.addControl(toolbar);
+                overview = new AMap.OverView(); //加载鹰眼
+                mapObj.addControl(overview);
+                scale = new AMap.Scale(); //加载比例尺
+                mapObj.addControl(scale);
+            });
+        }
+        function keywordSearch() {
+            var keywords = document.getElementById("keyword").value;
+            var city = document.getElementById("city").value;
+            var PoiSearchOption = {
+                srctype:"POI", //数据来源
+                type:"", //数据类别
+                number:10, //每页数量,默认10
+                batch:1, //请求页数，默认1
+                range:3000, //查询范围，默认3000米
+                ext:""//扩展字段
+            };
+            var MSearch = new AMap.PoiSearch(PoiSearchOption);
+            MSearch.byKeywords(keywords, city, keywordSearch_CallBack);
+            date = new Date();
+            startTime = date.getTime();
+        }
+        var resultCount = 10;
+        var marker = new Array();
+        var windowsArr = new Array();
+        function addmarker(i, d) {
+            var markerOption = {
+                icon:"http://api.amap.com/webapi/static/Images/" + (i + 1) + ".png",
+                position:new AMap.LngLat(d.x, d.y)
+            };
+            var mar = new AMap.Marker(markerOption);
+            mar.id = (i + 1);
+            marker.push(new AMap.LngLat(d.x, d.y));
+            var infoWindow = new AMap.InfoWindow
+                    ({
+                        content:"<h3><font color=\"#00a6ac\">&nbsp;&nbsp;" + (i + 1) + ". " + d.name + "</font></h3>" + TipContents(d.type, d.address, d.tel),
+                        size:new AMap.Size(300, 0),
+                        autoMove:true//设置自动调整信息窗口至视野范围
+                    });
+            windowsArr.push(infoWindow);
+            mapObj.addOverlays(mar);
+            var aa = function (e) {
+                infoWindow.open(mapObj, mar.getPosition());
+            };
+            mapObj.bind(mar, "click", aa);
+        }
+        function keywordSearch_CallBack(data) {
+            var resultStr = "";
+             
+            if (data.status == "E0") {
+                resultCount = data.list.length;
+                for (var i = 0; i < data.list.length; i++) {
+                    resultStr += "<div id='divid" + (i + 1) + "' onmouseover='openMarkerTipById1(" + i + ",this)' onmouseout='onmouseout_MarkerStyle(" + (i + 1) + ",this)' style=\"font-size: 12px;cursor:pointer;padding:0px 0 4px 2px; border-bottom:1px solid #C1FFC1;\"><table><tr><td><img src=\"http://api.amap.com/webapi/static/Images/" + (i + 1) + ".png\"></td>" + "<td><h3><font color=\"#00a6ac\">名称: " + data.list[i].name + "</font></h3>";
+                    resultStr += TipContents(data.list[i].type, data.list[i].address, data.list[i].tel) + "</td></tr></table></div>";
+                    addmarker(i, data.list[i]);
+                }
+                mapObj.setFitView();
+            }
+            else if (data.status == "E1") {
+                resultStr = "未查找到任何结果!<br />建议：<br />1.请确保所有字词拼写正确。<br />2.尝试不同的关键字。<br />3.尝试更宽泛的关键字。";
+            }
+            else {
+                resultStr = "错误信息：" + data.state + "请对照API Server v2.0.0 简明提示码对照表查找错误类型";
+            }
+            document.getElementById("result").innerHTML = resultStr;
+        }
+        function TipContents(type, address, tel) {
+            if (type == "" || type == "undefined" || type == null || type == " undefined" || typeof type == "undefined") {
+                type = "暂无";
+            }
+            if (address == "" || address == "undefined" || address == null || address == " undefined" || typeof address == "undefined") {
+                address = "暂无";
+            }
+            if (tel == "" || tel == "undefined" || tel == null || tel == " undefined" || typeof address == "tel") {
+                tel = "暂无";
+            }
+            var str = "&nbsp;&nbsp;地址：" + address + "<br />&nbsp;&nbsp;电话：" + tel + " <br />&nbsp;&nbsp;类型：" + type;
+            return str;
+        }
+        function openMarkerTipById1(pointid, thiss) {  //根据id打开搜索结果点tip
+            thiss.style.background = '#CAE1FF';
+            windowsArr[pointid].open(mapObj, marker[pointid]);
+        }
+        function onmouseout_MarkerStyle(pointid, thiss) { //鼠标移开后点样式恢复
+            thiss.style.background = "";
+        }
+
+		//页面宽高js调整		function pageInit() {			var h = document.body.offsetHeight;			var w = document.body.offsetWidth;			document.getElementById('main_left').style.height = h - 101 + 'px';			document.getElementById('map_container').style.height = h - 101 + 'px';			document.getElementById('map_container').style.width = w - 340 + 'px';		}
+
+    </script>
+</head>
+<body onload="mapInit();pageInit();">
+
+<div id="doc">
+	<div id="top_navigation">
+		<ul class="navigation_left_ul">
+			<li>
+				<a href="http://www.amap.com/" style="font-weight:bold;color:#FFF;">
+					网页地图
+				</a>
+			</li>
+			<li>
+				<a href="http://mobile.amap.com/">
+					手机地图
+				</a>
+			</li>
+			<li class="">
+				<a href="http://c.autonavi.com/club/">
+					手机导航
+				</a>
+			</li>
+			<li>
+				<a href="http://api.amap.com/">
+					地图API
+				</a>
+			</li>
+		</ul>
+		<div class="floatr" id="loginHead">
+			<div class="navigation_right_div">
+				<a href="http://mobile.amap.com/">
+					下载高德地图手机应用
+				</a>
+			</div>
+			<div class="floatl" style="display: none;">
+				<a href="javascript:void(0);" onclick="AF.Panel.Login.show()">
+					登录
+				</a>
+			</div>
+			<div class="floatl" style="display: none;">
+				|
+			</div>
+			<div class="floatl mr5" style="display: none;">
+				<a href="http://www.amap.com/auth/register?reurl=http://www.amap.com/">
+					注册
+				</a>
+			</div>
+			<div class="floatl mr5 not_display" id="logout" style="display: block;">
+				<a href="javascript:void(0)" onclick="AF.rc(this)" afcd="{cmd : &quot;logout&quot;}">
+					退出
+				</a>
+			</div>
+		</div>
+		<div class="clear">
+		</div>
+	</div>
+	<div id="top_logo">
+		<div class="logo_left_div floatl">
+			<div> plz input your address:
+			</div>
+			<div class="logo_left_div_item">
+				 
+					<!--<input class="txt300 floatl ui-autocomplete-input" id="keywordTxt" value=""
+					autocomplete="off"> !-->
+					<b>城市：</b>
+					<input type="text" id="city" name="city" value="010"/>
+					<input type="text" id="keyword" name="keyword" value="中关村"/>
+					<span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span>
+					<input type="button" value="查询" onclick="keywordSearch()" style="height: 22px; width: 45px;"/>
+					 
+				 
+			</div>
+			<div class="clear">
+			</div>
+		</div>
+		<div class="logo_userinfo not_display" id="userinfo" style="display: block;">
+			<div id="nickname" class="nickname">
+				Hi，无关
+			</div>
+			<div>
+				<img class="cursor" onclick="location.href='http://www.amap.com/auth/avatar'"
+				src="http://img.amap.com/ImageServer/image?c=avat&amp;size=s&amp;id=1551099&amp;_=0.9754081887658685">
+			</div>
+			<p class="clear">
+			</p>
+		</div>
+		<div class="clear">
+		</div>
+	</div>
+</div>
+
+<div id="main" style="width:1366px;">
+	<div id="main_left">
+		<div id="result" class='main_left_container'></div>
+	</div>
+	
+	<div id="map_container" style="margin-left:340px;">
+		<div id="iCenter" style="height:100%;width:100%;border:#F6F6F6 solid 1px;"></div>
+    <!--<div id="func">
+        <p>
+            <b>城市：</b>
+            <input type="text" id="city" name="city" value="010"/>
+            <b>关键字：</b>
+            <input type="text" id="keyword" name="keyword" value="中关村"/>
+            <input type="button" value="查询" onclick="keywordSearch()" style="margin-left:5px"/>
+			<br>
+            <b>端到端往返延迟（round-trip delay）：</b>
+            <input type="text" id="textSearchTime" readonly="yes" style="border: 0px;width:60%"/><br><b>本次请求 ID：</b><input type="text" id="textUniqId" readonly="yes" style="border: 0px;width:60%" /></input>
+        </p>
+    </div>!-->
+	</div>
+</div>	
+
+</body>
+</html>

@@ -24,7 +24,11 @@ padding-right:10px;}
 div.change{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker-h.png);}
 div.change div{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker-h-l.gif);}
 </style>
+
 <link rel="stylesheet" href="/admin/style/map_show.css" type="text/css"/>
+<link rel="stylesheet" href="/admin/style/navigation.css" type="text/css"/>
+
+
 <script type="text/javascript" src="/admin/script/jquery-1.7.2.min.js"></script>
 <script type="text/javascript"
 	src="http://webapi.amap.com/maps?v=1.1&key=5330cc846599b65275624084543beb2f">
@@ -161,6 +165,22 @@ div.change div{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/m
 
 <body onload="initialize()">  
 	<div class="main clearfix">
+	<div id="header">
+		  <div class="box12">
+			  <div class="menu12">
+			    <div class="left12"></div>
+			    <div class="center12">
+			      <a href="http://localhost:8000/blog/">Blog</a>
+			      <a href="#">Themes</a>
+			      <a href="#">Service</a>
+			      <a href="#">About</a>
+			      <del></del>
+			    </div>
+			    <div class="right12"></div>
+			    <div class="clear"></div>
+			  </div>
+		  </div>
+	</div>
 	<div id="container"></div>
 	<div id="wrapper" >
 	
@@ -187,13 +207,14 @@ div.change div{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/m
 					<img src="images/key.png" alt="Announcement">Login</button>
 					<ul id="forgottenpassword">
 					<li class="boldtext">|</li>
-					<li><a href="forgot.php">Forgotten it?</a></li>
+					<li><a href="http://localhost:8000/reguser/">注册</a></li>
 				</ul>
                          						</fieldset>
 			
 			
 		</form></div>
 	</div>
+	
 </div>
 </body>
 </html>

@@ -254,6 +254,18 @@ z-index: 10;
   width: 500px;
   background: url(/admin/image/startpage.png) no-repeat left bottom;
 }
+
+
+#startpage #reg-startpage {
+  height: 82px;
+  margin: 40px auto 40px;
+  text-indent: -9999px;
+  position: relative;
+  width: 500px;
+  background: url(/admin/img/gra_reg.jpg) no-repeat left bottom;
+}
+
+
 #startpage #login-wrap {
   margin: 0 auto;
   width: 600px;

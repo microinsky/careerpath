@@ -199,6 +199,7 @@ def connectAccountDatabase():
 
 
 
+### added by insKy - new db connection
 def connectMapsDatabase():
     """
     连接到地图数据库
@@ -212,3 +213,4 @@ def connectMapsDatabase():
 
     c = Connection(host)
     return c['realBlog_maps']
+

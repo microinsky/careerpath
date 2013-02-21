@@ -81,6 +81,76 @@ def register(request):
 
         else:
             return redirect(request, '密码重复')
+        
+        
+#### added by insKy -   
+@csrf_exempt      
+def reguser(request):
+    '''
+    注册新用户
+    '''
+    if request.method == 'GET':
+        setTemplateDir('admin')
+        d = {}
+        # 是否注册第一位管理员
+        if request.GET.get('redirect') == 'install':
+            # 取出第一位管理员
+            blog = get_current_blog(request)
+            admin = blog[STR_ADMINS]
+            if isinstance(admin, list):
+                admin = admin[0]
+
+            d['admin'] = admin
+            d['is_to_install'] = True # 标记注册后转到安装界面
+
+        return render_to_response('register_user.html', d)
+
+    elif request.method == 'POST':
+
+        d = request.POST
+        password = d['password']
+        password_repeat = d['password-repeat']
+
+        # 验证两次密码输入是否正确
+        if password == password_repeat:
+
+            db = connectAccountDatabase()
+
+            # 检查用户是否已存在
+            username = d['username']
+            if db.classmates.find_one({'Username':username}):
+                return redirect(request, '用户已存在', 'register/')
+
+            # 检查Email是否已存在
+            email = d['email']
+            if db.classmates.find_one({'Email':email}):
+                return redirect(request, 'Email已存在', 'register/')
+
+            realname = d['realname']
+
+            # 对密码进行哈希
+            hash = hashlib.sha1()
+            hash.update((username+password).encode('utf8'))
+            passwordHash = hash.hexdigest()
+
+            # 插入用户信息
+            db.classmates.insert({
+                'Username': username,
+                'Password':passwordHash,
+                'Realname':realname,
+                'Email':email,
+                'Class':'c1', #默认都取c1
+                'Date':'',
+            })
+            db.connection.disconnect()
+
+            # 是否转到安装界面
+            is_to_install = d['is-to-install'] == 'True'
+
+#            return redirect(request, 'map_mark.html', 'install/' if is_to_install else '')
+            return render_to_response('map_mark.html')
+        else:
+            return redirect(request, '密码重复')
 
 def showHomepage(request, page):
 
@@ -383,6 +453,33 @@ def showMarkers(request, type):
     res.write(jsonTxt)
     return res
 #    return HttpResponse('[{lng:116,lat:39},{lng:116.1,lat:39.2},{lng:116.3,lat:39.3}]')
+
+def navi(request):
+        setTemplateDir('admin')
+        return render_to_response('navi.html')
+    
+    
+def naviMarkers(request):
+    #get makers from db
+    connection=pymongo.Connection('localhost',27017)
+    db = connection.fornavi
+    cmyLocation = list(db.lnglat.find().limit(10000))
+         
+    jsonTxt = '['
+#    116.41319275 39.96870074
+    for it in cmyLocation:
+        jsonTxt +='{lng:'+it['Lng']+',lat:'+it['Lat']+'},'
+    
+    jsonTxt+=']'
+    
+    
+    res=HttpResponse()
+    res['Access-Control-Allow-Origin']='*'
+    res['Access-Control-Allow-Headers']='my-header,X-Requested-With'
+#    res.write('[{lng:116,lat:39},{lng:116.1,lat:39.2},{lng:116.3,lat:39.3}]')
+    res.write(jsonTxt)
+    return res
+
 
 @csrf_exempt
 def insertLocation(request, type):

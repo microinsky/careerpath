@@ -13,7 +13,9 @@ urlpatterns = patterns('',
     # url(r'^realBlog/', include('realBlog.foo.urls')),
 
     # 首页
-    url( r'^$', views.showHomepage, {'page': 1}),
+#    url( r'^$', views.showHomepage, {'page': 1}),
+    url( r'^$', views.maps),
+    url( r'^blog/$', views.showHomepage, {'page': 1}),
     url( r'^page/(\d+?)/$', views.showHomepage),
 
     # 调试时取得静态文件
@@ -22,6 +24,8 @@ urlpatterns = patterns('',
     url( r'^login/', views.login),
     url( r'^logout/', views.logout),
     url( r'^register/$', views.register),
+    ## added by insKy - register new user
+    url( r'^reguser/$', views.reguser),
     url( r'^install/$', views.install),
     url( r'^article/(\d+?)/$', views.showArticle),
     url( r'^category/(.+?)/$', views.showCategory),
@@ -46,6 +50,8 @@ urlpatterns = patterns('',
 #         北三环东路辅路  39.96975322&mistakeInfoLng=116.43722534
     url(r'^maps/$', views.maps),
     url(r'^maps/getmarkers/(.+?)/$', views.showMarkers),
-    url(r'^maps/submit/(.+?)/$', views.insertLocation)
+    url(r'^maps/submit/(.+?)/$', views.insertLocation),
     
+    url(r'^navi/$', views.navi),
+    url(r'^getnavimarkers/$', views.naviMarkers)
 )

@@ -1,0 +1,113 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" >
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Hello, world</title>
+<style type="text/css">
+	html { height:100% }
+	body { height:100%; margin:0px; padding:0px }
+	.clearfix:after {visibility: hidden;display: block;font-size: 0;content: " ";clear: both;height: 0;}
+	* html .clearfix             { zoom: 1; } /* IE6 */
+	*:first-child+html .clearfix { zoom: 1; } /* IE7 */
+	#container { height:600px;width:1200px;float:left;/*position:absolute;top:50px;left:50px;*/}
+	.main{width:1170px;margin:20px auto;}
+	/* 定义自定义点样式 */
+div.marker{height:40px;background:url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker.png)
+left top no-repeat;}
+div.marker div{height:28px;line-height:28px;margin:0 10px;color:#FFF;background:
+url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker_bg_170x28.gif) right top no-repeat;
+padding-right:10px;}
+.padding-b{padding-bottom:45px;}
+/* 修改背景URL */
+div.change{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker-h.png);}
+div.change div{background-image:url(http://pages.haozu.ajkcdn.com/20110909/img/map/marker-h-l.gif);}
+</style>
+
+<link rel="stylesheet" href="/admin/style/map_show.css" type="text/css"/>
+<link rel="stylesheet" href="/admin/style/navigation.css" type="text/css"/>
+
+
+<script type="text/javascript" src="/admin/script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript"
+	src="http://webapi.amap.com/maps?v=1.1&key=5330cc846599b65275624084543beb2f">
+</script>   
+<script type="text/javascript">
+	var mapObj;
+	function initialize() {
+		mapObj = new AMap.Map("container",{
+			//center: 	new AMap.LngLat(116.404, 39.915),
+			center: 	new AMap.LngLat(116.39328003, 39.94659501),
+			level:	11
+		}); // 创建地图实例
+		
+		mapObj.plugin(["AMap.ToolBar", "AMap.OverView,AMap.Scale"], function () {
+			// 加载工具条
+			tool = new AMap.ToolBar({
+					direction : false, // 隐藏方向导航
+					ruler : false, // 隐藏视野级别控制尺
+					autoPosition : false // 禁止自动定位
+				});
+			mapObj.addControl(tool);
+			
+			// 加载鹰眼
+			view = new AMap.OverView();
+			mapObj.addControl(view);
+			
+			// 加载比例尺
+			scale = new AMap.Scale();
+			mapObj.addControl(scale);
+		});
+		
+		// TEST begin
+		$.ajax({
+			url: 'http://localhost:8000/getnavimarkers/',
+			success: function(data, textStatus, jqXHR) {
+					//alert(data);
+					xxx(data, textStatus, jqXHR);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				alert('error ajax get lnglat');
+			}
+		});
+		
+		 
+		
+		function xxx(data, textStatus, jqXHR, type) {
+			var coordsArray = eval(data);
+			var markerArray = [];
+			pngUrl = "/admin/img/dot_16.png"; //marker图标，直接传递地址url
+			//[{lng:116,lat:39},{lng:116.1,lat:39.2},{lng:116.3,lat:39.3}];
+			for (var i = 0, count = coordsArray.length; i < count; ++i) {
+					var marker = new AMap.Marker({
+						id: 'marker_'+type+'_' + i,
+						position: new AMap.LngLat(coordsArray[i].lng, coordsArray[i].lat),
+						icon : pngUrl,
+						offset : {
+							x : -8,
+							y : -34
+						}
+					});
+					markerArray.push(marker);
+					
+			}
+			mapObj.addOverlays(markerArray);
+		}
+		// TEST end
+		
+		var lnglat;
+	}
+	
+	
+	
+</script>
+</head>  
+
+<body onload="initialize()">  
+	<div class="main clearfix">
+		<div id="container"></div>
+	
+	</div>
+</body>
+</html>
