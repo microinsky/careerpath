@@ -23,3 +23,7 @@ http://www.newsmth.net/bbstcon.php?board=WorkLife&gid=6030281
 http://127.0.0.1:8000/admin/
 查看博客url:
 http://127.0.0.1:8000/
+
+
+
+

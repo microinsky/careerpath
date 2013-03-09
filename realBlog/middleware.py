@@ -31,3 +31,25 @@ def isAdmin(user, request):
             return True
 
     return False
+
+
+'''
+    验证是否登录
+'''
+class CheckLoginMiddleware(object):
+
+    def process_view(self, request, view, args, kwargs):
+        """newArticle, editArticle"""
+        module = view.__module__
+        if not module.find("realBlog.admin."):
+            url = urllib2.quote(request.get_full_path()[1:])
+
+            user = request.session.get('user')
+            if user is None:
+                return HttpResponseRedirect('/login/?redirect='+url)
+
+        return None
+
+
+
+

@@ -24,7 +24,7 @@ function save()
             'timezone-offset': $('#timezone-offset').val()
         };
         $.post(window.location.pathname, data)
-            .success(function() { alert("second success"); })
+            .success(function() { window.location = "http://{{ host }}/admin/"; })
             .error(function() { alert("error"); })
     }
 }

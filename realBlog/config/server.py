@@ -11,7 +11,7 @@ STR_NAME = 'Name'
 STR_ADMINS = 'Administrators'
 
 BLOGS = {
-    '127.0.0.1:8000':{
+    '127.0.0.1:8082':{
         STR_NAME: 'realBlog',  #it should be changed when developing..
         STR_ADMINS: 'real',
     }

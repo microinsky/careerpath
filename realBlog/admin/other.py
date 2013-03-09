@@ -102,4 +102,4 @@ def upload_xml(request):
 
 
 def import_and_output(request):
-    return render_admin_and_back(request, 'import-and-output.html', {})
+    return render_admin_and_back(request, 'import-and-output.html', {'selection': 'import-and-output',})

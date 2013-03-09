@@ -19,11 +19,12 @@ urlpatterns = patterns('',
     url( r'^page/(\d+?)/$', views.showHomepage),
 
     # 调试时取得静态文件
-    url( r'\.(css|js|png|jpg|gif|xml|swf|html)$', views.getFile),
+    url( r'\.(css|js|png|jpg|gif|xml|swf|html|htm)$', views.getFile),
 
     url( r'^login/', views.login),
     url( r'^logout/', views.logout),
     url( r'^register/$', views.register),
+    url( r'^index_user/$', views.index_user),
     ## added by insKy - register new user
     url( r'^reguser/$', views.reguser),
     url( r'^install/$', views.install),

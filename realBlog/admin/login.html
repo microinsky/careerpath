@@ -8,26 +8,63 @@
 <script type="text/javascript" src="/admin/script/crypto-sha1.js"></script>
 <script type="text/javascript" src="/admin/script/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
-function login()
-{
-    // 取用户名和密码，一次哈希
-    var source = $('#username').val() + $('#password').val();
-    var bytes = Crypto.SHA1(source, { asBytes: true });
-    var hash = Crypto.util.bytesToHex(bytes);
 
-    // 取时间，二次哈希
-    var now = new Date();
-    var dateStr = now.getYear() + '/' + now.getMonth() + '/' + now.getDay();
+//自动获取帐号的焦点
+setTimeout("document.getElementById(\"j_username\").focus()", 50);
+$(document).ready(function(){
+ 	$("#j_username").keydown(function(event){
+ 		if(event.keyCode==13){
+ 			$("#j_password").focus();
+ 		}
+	});
+ 	$("#j_password").keydown(function(event){
+ 		if(event.keyCode==13)
+ 			login();
+ 	});
+});
 
-    source = hash + dateStr;
-    bytes = Crypto.SHA1(source, { asBytes: true });
-    hash = Crypto.util.bytesToHex(bytes);
-
-    $('#date').val(dateStr);
-    $('#passwordHash').val(hash);
-
-    document.forms[0].submit();
+function login() {
+	var userName = document.getElementById("j_username");
+	var b = true;
+	if(userName.value == "") {
+		alert("帐户不能为空");
+		$("#j_username").focus();
+		b = false;
+		return;
+	}
+	var password = document.getElementById("j_password");
+	if(password.value == "") {
+		alert("密码不能为空");
+		$("#j_password").focus();
+		b = false;
+		return;
+	}
+	
+	if(b) {
+	    // 取用户名和密码，一次哈希
+	    var source = $('#j_username').val() + $('#j_password').val();
+	    var bytes = Crypto.SHA1(source, { asBytes: true });
+	    var hash = Crypto.util.bytesToHex(bytes);
+	
+	    // 取时间，二次哈希
+	    var now = new Date();
+	    var dateStr = now.getYear() + '/' + now.getMonth() + '/' + now.getDay();
+	
+	    source = hash + dateStr;
+	    bytes = Crypto.SHA1(source, { asBytes: true });
+	    hash = Crypto.util.bytesToHex(bytes);
+	
+	    $('#date').val(dateStr);
+	    $('#passwordHash').val(hash);
+	
+	    document.forms[0].submit();
+	}
 }
+
+function backIndex(){
+	window.location = "/register";
+}
+
 </script>
 </head>
 
@@ -35,23 +72,25 @@ function login()
 <div id="startpage" class="clearfix">
     <div id="startpage-wrap">
         <h1 id="logo-startpage">RealBlog</h1>
-        <div id="login-wrap">
+        <div id="login-wrap" style="margin-left: 340px; width:800px;">
             <form id="login-form" class="clearfix" method="post">
                 <div class="input-wrap" id="input-login-email">
                     <span class="input-icon"></span>
                     <label>用户名</label>
-                    <input class="startpage-input-text" type="text" id="username" name="username" value="" />
+                    <input class="startpage-input-text" type="text" id="j_username" name="username" value="" />
                     <div class="tip" style="display:none"></div>
                 </div>
                 <div class="input-wrap" id="input-login-pwd">
                     <span class="input-icon"></span>
                     <label>密码</label>
-                    <input class="startpage-input-text" type="password" id="password"/>
+                    <input class="startpage-input-text" type="password" id="j_password"/>
                     <div class="tip" style="display:none"></div>
                 </div>
                 <input id="date" name="date" type="hidden" />
                 <input id="passwordHash" name="passwordHash" type="hidden" />
-                <input type="submit" id="login-submit" class="input-button" onclick="login()" value="登录" />
+                <input type="button" id="login-submit" class="input-button" onclick="login()" value="登录" />
+                <input type="button" id="register" class="input-button" style="float: right; margin-right: 160px;" onclick="javasrcipt:backIndex();" value="注册" />
+                
             </form>
         </div>
         <div id="footer">

@@ -9,9 +9,9 @@
 <script type="text/javascript" src="/admin/script/crypto-min.js"></script>
 <script type="text/javascript" src="/admin/script/crypto-sha1.js"></script>
 <script type="text/javascript" src="/admin/script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/admin/My97DatePicker/WdatePicker.js" defer="defer"></script>
 <script type="text/javascript">
-function login()
-{
+function login() {
     // 取用户名和密码，一次哈希
     var source = $('#username').val() + $('#password').val();
     var bytes = Crypto.SHA1(source, { asBytes: true });
@@ -30,6 +30,137 @@ function login()
 
     document.forms[0].submit();
 }
+
+function test() {
+	 //用jquery不行，用原始的javascript代码就可以
+	//$('#marrydate').style.display="block";
+	document.getElementById('marrydate').style.display="block";
+}
+
+
+function showOrHidden(flag) {
+	if(flag == '0') {
+		document.getElementById('marrydate').style.display="block";
+		document.getElementById('baby').style.display="block";
+		
+		var baby = document.getElementsByName("baby");
+		var babyValue;
+		for(var i=0;i<baby.length;i++) {
+			if(baby[i].checked) {
+			    babyValue = baby[i].value;
+			    //babyValue = baby[i].getAttribute("value");
+			}
+		}
+		if(babyValue == '0') {
+			document.getElementById('babyBirthDate').style.display="block";
+			document.getElementById('babyGender').style.display="block";
+		} else if(babyValue == '1') {
+			document.getElementById('babyBirthDate').style.display="none";
+			document.getElementById('babyGender').style.display="none";
+		}
+		
+	} else if(flag == '1') {
+		document.getElementById('marrydate').style.display="none";
+		document.getElementById('baby').style.display="none";
+		document.getElementById('babyBirthDate').style.display="none";
+		document.getElementById('babyGender').style.display="none";
+	}
+}
+
+function showOrHiddenBabyDetail(flag) {
+	if(flag == '0') {
+		document.getElementById('babyBirthDate').style.display="block";
+		document.getElementById('babyGender').style.display="block";
+	} else if(flag == '1') {
+		document.getElementById('babyBirthDate').style.display="none";
+		document.getElementById('babyGender').style.display="none";
+	}
+}
+
+
+//自动获取帐号的焦点
+setTimeout("document.getElementById(\"j_username\").focus()", 50);
+$(document).ready(function(){
+ 	$("#j_username").keydown(function(event){
+ 		if(event.keyCode==13){
+ 			$("#j_password").focus();
+ 		}
+	});
+ 	$("#j_password").keydown(function(event){
+ 		if(event.keyCode==13)
+ 			subForm();
+ 	});
+});
+
+
+function subForm(){
+	var userName = document.getElementById("j_username");
+	var b = true;
+	if(userName.value == "") {
+		alert("帐户不能为空");
+		$("#j_username").focus();
+		b = false;
+		return;
+	}
+	var password = document.getElementById("j_password");
+	if(password.value == "") {
+		alert("密码不能为空");
+		$("#j_password").focus();
+		b = false;
+		return;
+	}
+	var repeatpassword = document.getElementById("j_repeatpassword");
+	if(repeatpassword.value == "") {
+		alert("重复密码不能为空");
+		$("#j_repeatpassword").focus();
+		b = false;
+		return;
+	} else if(repeatpassword.value != password.value){
+		alert("两次输入密码不一致");
+		$("#j_repeatpassword").focus();
+		b = false;
+		return;
+	}
+	var nickname = document.getElementById("j_nickname");
+	if(nickname.value == "") {
+		alert("昵称不能为空");
+		$("#j_nickname").focus();
+		b = false;
+		return;
+	}
+	var nickname = document.getElementById("j_nickname");
+	if(nickname.value == "") {
+		alert("昵称不能为空");
+		$("#j_nickname").focus();
+		b = false;
+		return;
+	}
+	var email = document.getElementById("j_email");
+	if(email.value == "") {
+		alert("电子邮箱不能为空");
+		$("#j_email").focus();
+		b = false;
+		return;
+	} else {
+		var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+		if(!myreg.test(email.value)) {
+			alert("email格式不正确，请重新输入！");
+	    	$("#j_email").focus();
+	    	b = false;
+			return;
+	    }
+	}
+	if(b){
+		var form = document.getElementById("lazyForm");
+		form.submit();
+	}
+	return false;
+}
+
+function backIndex(){
+	window.location = "/login";
+}
+
 </script>
 </head>
 
@@ -38,12 +169,12 @@ function login()
 <div id="startpage-wrap">
 <h1 id="logo-startpage">RealBlog</h1>
 <div id="login-wrap">
-<form class="clearfix" method="post">
+<form class="clearfix" id="lazyForm" method="post">
 <ul class="list clearfix">
 <li class="li clearfix">
     <div class="item-title">用户名</div>
     <div class="item">
-        <input type="text" name="username" class="ui-text skin-text-willwhite" value="{{ admin }}" {{ is_to_install|yesno:"readonly=&quot;readonly&quot;," }}>
+        <input type="text" id="j_username" name="username" class="ui-text skin-text-willwhite" value="{{ admin }}" {{ is_to_install|yesno:"readonly=&quot;readonly&quot;," }}>
     </div>
     <div class="item-des">{{ is_to_install|yesno:"创建指定管理员账户，为安装做准备,仅限字母、数字和下划线" }}</div>
     <input type="hidden" name="is-to-install" value="{{ is_to_install }}">
@@ -51,33 +182,127 @@ function login()
 <li class="li clearfix">
     <div class="item-title">密码</div>
     <div class="item">
-        <input type="password" name="password" class="ui-text skin-text-willwhite">
+        <input type="password" id="j_password" name="password" class="ui-text skin-text-willwhite">
     </div>
-    <div class="item-des">密码不能少于6位</div>
+    <div class="item-des">密码不能少于6位(现在没做限制)</div>
 </li>
 <li class="li clearfix">
     <div class="item-title">重复密码</div>
     <div class="item">
-        <input type="password" name="password-repeat" class="ui-text skin-text-willwhite">
+        <input type="password" id="j_repeatpassword" name="password-repeat" class="ui-text skin-text-willwhite">
     </div>
     <div class="item-des"></div>
 </li>
 <li class="li clearfix">
     <div class="item-title">昵称</div>
     <div class="item">
-        <input type="text" name="nickname" class="ui-text skin-text-willwhite">
+        <input type="text" id="j_nickname" name="nickname" class="ui-text skin-text-willwhite">
     </div>
     <div class="item-des">昵称作为文章的作者显示</div>
 </li>
+
+
 <li class="li clearfix normal">
-    <div class="item-title">电子邮箱</div>
+    <div class="item-title">真实姓名</div>
     <div class="item">
-        <input type="text" name="email" class="ui-text skin-text-willwhite">
+        <input type="text" name="realname" class="ui-text skin-text-willwhite">
     </div>
     <div class="item-des"></div>
 </li>
 <li class="li clearfix normal">
-    <input type="submit" class="input-button" style="float: right;margin-right: 200px;" value="创建账户" />
+    <div class="item-title">电子邮箱</div>
+    <div class="item">
+        <input type="text" id="j_email" name="email" class="ui-text skin-text-willwhite">
+    </div>
+    <div class="item-des"></div>
+</li>
+<li class="li clearfix">
+    <div class="item-title">性别</div>
+    <div class="item" style="padding:10px 10px 0 20px;">
+        <input type="radio" name="gender" value="0" checked="checked" /> 男&nbsp;&nbsp;&nbsp;
+		<input type="radio" name="gender" value="1" /> 女
+    </div>
+</li>
+<li class="li clearfix normal" style="display:none;">
+    <div class="item-title">班级</div>
+    <div class="item">
+        <input type="text" name="classname" value="06se" class="ui-text skin-text-willwhite">
+    </div>
+    <div class="item-des"></div>
+</li>
+<li class="li clearfix normal" style="display:none;">
+    <div class="item-title">学校</div>
+    <div class="item">
+        <input type="text" name="school" value="bupt" class="ui-text skin-text-willwhite">
+    </div>
+    <div class="item-des"></div>
+</li>
+<li class="li clearfix normal">
+    <div class="item-title">手机号</div>
+    <div class="item">
+        <input type="text" name="phone" class="ui-text skin-text-willwhite">
+    </div>
+    <div class="item-des"></div>
+</li>
+<li class="li clearfix normal">
+    <div class="item-title">家庭住址</div>
+    <div class="item">
+        <input type="text" name="address" class="ui-text skin-text-willwhite">
+    </div>
+    <div class="item-des"></div>
+</li>
+<li class="li clearfix normal">
+    <div class="item-title">公司名称</div>
+    <div class="item">
+        <input type="text" name="company" class="ui-text skin-text-willwhite">
+    </div>
+    <div class="item-des"></div>
+</li>
+<li class="li clearfix normal">
+    <div class="item-title">QQ号码</div>
+    <div class="item">
+        <input type="text" name="qq" class="ui-text skin-text-willwhite">
+    </div>
+    <div class="item-des"></div>
+</li>
+<li class="li clearfix">
+    <div class="item-title">是否结婚</div>
+    <div class="item" style="padding:10px 10px 0 20px;">
+        <input type="radio" name="marry" value="0" onclick="javascript: showOrHidden('0');" /> 是&nbsp;&nbsp;&nbsp;
+		<input type="radio" name="marry" value="1" onclick="javascript: showOrHidden('1');" checked="checked" /> 否
+    </div>
+</li>
+<li class="li clearfix" id="marrydate" style="display:none;">
+    <div class="item-title">结婚日期</div>
+    <div class="item">
+        <input type="text" name="marrydate" id="startDate_s" class="Wdate required ui-text skin-text-willwhite" size="30" readonly="readonly"
+			onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-%d'})" />
+    </div>
+</li>
+<li class="li clearfix" id="baby" style="display:none;">
+    <div class="item-title">是否有宝宝</div>
+    <div class="item" style="padding:10px 10px 0 20px;">
+        <input type="radio" name="baby" value="0" onclick="javascript: showOrHiddenBabyDetail('0');" /> 是&nbsp;&nbsp;&nbsp;
+		<input type="radio" name="baby" value="1" onclick="javascript: showOrHiddenBabyDetail('1');" checked="checked" /> 否
+    </div>
+</li>
+<li class="li clearfix" id="babyBirthDate" style="display:none;">
+    <div class="item-title">宝宝出生日期</div>
+    <div class="item">
+        <input type="text" name="babyBirthDate" id="startDate_s" class="Wdate required ui-text skin-text-willwhite" size="30" readonly="readonly"
+			onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-%d'})" />
+    </div>
+</li>
+<li class="li clearfix" id="babyGender" style="display:none;">
+    <div class="item-title">宝宝性别</div>
+    <div class="item" style="padding:10px 10px 0 20px;">
+        <input type="radio" name="babyGender" value="0" checked="checked" /> 男&nbsp;&nbsp;&nbsp;
+		<input type="radio" name="babyGender" value="1" /> 女
+    </div>
+</li>
+<li class="li clearfix normal">
+    <input type="button" class="input-button" style="float: left;margin-left: 150px;" onclick="javasrcipt:subForm();" value="注册" />
+    <input type="button" class="input-button" style="float: right;margin-right: 225px;" onclick="javasrcipt:backIndex();" value="取消" />
 </li>
 </ul>
 

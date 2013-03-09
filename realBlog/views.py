@@ -13,7 +13,23 @@ from django.views.decorators.csrf import csrf_exempt
 
 from func import *
 
+from datetime import datetime
+
 __author__ = 'Home'
+
+
+
+def index_user(request):
+
+    db = connectAccountDatabase()
+    info = db.infos.find_one()
+    users = list(db.users.find())
+
+    return render_admin_and_back(request, 'users.html', {
+        'page':u'用户管理',
+        'users':users,
+        'selection':'users',
+        })
 
 
 @csrf_exempt
@@ -59,6 +75,21 @@ def register(request):
                 return redirect(request, 'Email已存在', 'register/')
 
             nickname = d['nickname']
+            realname = d['realname']
+            gender = d['gender']
+            classname = d['classname']
+            school = d['school']
+            phone = d['phone']
+            address = d['address']
+            company = d['company']
+            qq = d['qq']
+            marry = d['marry']
+            marrydate = d['marrydate']
+            baby = d['baby']
+            babyBirthDate = d['babyBirthDate']
+            babyGender = d['babyGender']
+            # 设置当前时间为注册时间
+            regisDate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             # 对密码进行哈希
             hash = hashlib.sha1()
@@ -70,13 +101,31 @@ def register(request):
                 'Username': username,
                 'Password':passwordHash,
                 'Nickname':nickname,
+                'Realname':realname,
                 'Email':email,
+                'Gender':gender,
+                'Classname':classname,
+                'School':school,
+                'Phone':phone,
+                'Address':address,
+                'Company':company,
+                'QQ':qq,
+                'Marry':marry,
+                'Marrydate':marrydate,
+                'Baby':baby,
+                'BabyBirthDate':babyBirthDate,
+                'BabyGender':babyGender,
+                'RegisDate':regisDate,
             })
             db.connection.disconnect()
 
             # 是否转到安装界面
             is_to_install = d['is-to-install'] == 'True'
-
+            if is_to_install == False:
+                user = db.users.find_one({'Username': username})
+                request.session['user'] = user
+                return redirect(request, '新建用户成功', 'admin/')
+            
             return redirect(request, '新建用户成功', 'install/' if is_to_install else '')
 
         else:
@@ -396,7 +445,18 @@ def login(request):
         if 'redirect' in request.GET:
             url = urllib2.unquote(request.GET['redirect'])
 
-        return redirect(request, '登陆成功', url or 'admin/', 0)
+#        return redirect(request, '登陆成功', url or 'admin/', 0)
+#        return redirect(request, '登陆成功', 'admin/')
+        
+        # 上面的重定向方法只适合管理员real帐号，普通帐号总是重定向到登录界面，下面方法可以实现普通帐号登录
+        db = connectBlogDatabase(request)
+        info = db.infos.find_one()
+        articles = list(db.articles.find(sort=[('PostOn', pymongo.DESCENDING)]))
+        return render_admin_and_back(request, 'articles.html', {
+            'page':u'文章',
+            'articles':articles,
+            'selection':'articles',
+        })
 
 def logout(request):
 

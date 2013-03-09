@@ -1,12 +1,34 @@
-#Wed Jan 30 23:01:37 CST 2013
+#Sun Mar 03 10:33:12 CST 2013
 eclipse.preferences.version=1
 encoding//realBlog/admin/article.py=utf-8
+encoding//realBlog/admin/articles.html=UTF-8
+encoding//realBlog/admin/blog-plugins.html=UTF-8
+encoding//realBlog/admin/blog-settings.html=UTF-8
 encoding//realBlog/admin/category.py=utf-8
+encoding//realBlog/admin/edit-article.html=UTF-8
+encoding//realBlog/admin/edit-category.html=UTF-8
+encoding//realBlog/admin/edit-link.html=UTF-8
+encoding//realBlog/admin/import-and-output.html=UTF-8
+encoding//realBlog/admin/install.html=UTF-8
 encoding//realBlog/admin/link.py=utf8
+encoding//realBlog/admin/login.html=UTF-8
 encoding//realBlog/admin/other.py=utf8
+encoding//realBlog/admin/redirect.html=UTF-8
+encoding//realBlog/admin/region-header.html=UTF-8
+encoding//realBlog/admin/region-sidebar.html=UTF-8
+encoding//realBlog/admin/register.html=UTF-8
+encoding//realBlog/admin/register_user.html=UTF-8
+encoding//realBlog/admin/show-categories.html=UTF-8
+encoding//realBlog/admin/show-hidden-article.html=UTF-8
+encoding//realBlog/admin/show-hidden-articles.html=UTF-8
+encoding//realBlog/admin/show-links.html=UTF-8
+encoding//realBlog/admin/timezone.py=utf-8
+encoding//realBlog/admin/urls.py=utf-8
+encoding//realBlog/admin/users.html=UTF-8
 encoding//realBlog/config/server.py=utf-8
 encoding//realBlog/func.py=utf-8
 encoding//realBlog/middleware.py=utf-8
 encoding//realBlog/rss.py=utf-8
 encoding//realBlog/urls.py=utf-8
 encoding//realBlog/views.py=utf-8
+encoding/<project>=UTF-8
